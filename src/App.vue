@@ -1,64 +1,69 @@
 <template>
   <div id="app">
 
-    <div class="grid">
-      <div class="row" v-for="(row, rowIndex) in grid" :style="rowPosition(rowIndex)">
-        <div class="tile" v-for="(tile, tileIndex) in row" :style="tileStyles(tileIndex)">
-          <img class="grid-tile" :src="tiles['zero']"/>
+    <div class="graphic">
+      <div class="grid">
+        <div class="row" v-for="(row, rowIndex) in grid" :style="rowPosition(rowIndex)">
+          <div class="tile" v-for="(tile, tileIndex) in row" :style="tileStyles(tileIndex)">
+            <img class="grid-tile" :src="tiles['zero']"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="ground">
+        <div class="row" v-for="(row, rowIndex) in grid" :style="rowPosition(rowIndex)">
+          <div class="tile" v-for="(tile, tileIndex) in row" :style="tileStyles(tileIndex)">
+            <img class="grid-tile" :src="tiles[tile]"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="structures">
+        <div class="row" v-for="(row, rowIndex) in objects" :style="rowPosition(rowIndex)">
+          <div v-if="tile" class="tile" v-for="(tile, tileIndex) in row" :style="structureStyles(tileIndex)">
+            <img class="structure-tile" :src="tiles[tile]"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="markers">
+        <div class="row" v-for="(row, rowIndex) in objects" :style="rowPosition(rowIndex)">
+          <div v-if="tile" class="tile" v-for="(tile, tileIndex) in row" :style="tileStyles(tileIndex)">
+            <div class="dot-background"></div>
+            <div class="dot" :type="tile" @click="showTooltip"></div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="ground">
-      <div class="row" v-for="(row, rowIndex) in grid" :style="rowPosition(rowIndex)">
-        <div class="tile" v-for="(tile, tileIndex) in row" :style="tileStyles(tileIndex)">
-          <img class="grid-tile" :src="tiles[tile]"/>
-        </div>
-      </div>
-    </div>
-
-    <div class="structures">
-      <div class="row" v-for="(row, rowIndex) in objects" :style="rowPosition(rowIndex)">
-        <div v-if="tile" class="tile" v-for="(tile, tileIndex) in row" :style="structureStyles(tileIndex)">
-          <img class="structure-tile" :src="tiles[tile]"/>
-        </div>
-      </div>
-    </div>
-
-    <div class="markers">
-      <div class="row" v-for="(row, rowIndex) in objects" :style="rowPosition(rowIndex)">
-        <div v-if="tile" class="tile" v-for="(tile, tileIndex) in row" :style="tileStyles(tileIndex)">
-          <div class="dot-background"></div>
-          <div class="dot"></div>
-        </div>
-      </div>
-    </div>
-
+    <tooltip v-show="displayTooltip" @hideTooltip="hideTooltip" :content="tooltipContent"></tooltip>
   </div>
 </template>
 
 <script>
-import Hello from './components/Hello'
+import Tooltip from './components/Tooltip'
 
 export default {
   name: 'app',
   components: {
-    Hello
+    Tooltip
   },
   data () {
     return {
+      displayTooltip: false,
+      tooltipContent: 'text...',
       tileRatio: 1.7345,
       tileWidth: 200,
       offset: 0.94,
       grid: [
         ['grass', 'grass', 'grass'],
         ['grass', 'grass', 'grass'],
-        ['grass', 'stone', 'grass']
+        ['stone', 'stone', 'grass']
 
       ],
       objects: [
         ['temple', null, 'solar'],
-        [null, null, null],
+        ['house', null, 'house'],
         [null, 'factory', null]
       ],
       tiles: {
@@ -67,7 +72,8 @@ export default {
         stone: require('./assets/stone.png'),
         temple: require('./assets/temple.png'),
         factory: require('./assets/factory.png'),
-        solar: require('./assets/solar.png')
+        solar: require('./assets/solar.png'),
+        house: require('./assets/house.png')
       }
     }
   },
@@ -104,6 +110,14 @@ export default {
         top: this.tilePosition(i).top,
         left: this.tilePosition(i).left
       }
+    },
+    showTooltip (e) {
+      this.displayTooltip = true
+      this.tooltipContent = e.target.getAttribute('type')
+      console.log(e)
+    },
+    hideTooltip (e) {
+      this.displayTooltip = false
     }
   }
 }
@@ -117,7 +131,11 @@ export default {
 
   #app {
     position: relative;
-    margin-top: 120px;
+  }
+
+  .graphic {
+    position: relative;
+    margin-top: 60px;
   }
 
   .grid, .ground, .structures, .markers {
@@ -141,7 +159,7 @@ export default {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    opacity: 0.8;
+    opacity: 0.5;
     z-index: 2;
   }
 
@@ -152,6 +170,7 @@ export default {
   .dot:hover {
     opacity: 1;
     transition: .3s ease-in;
+    cursor: pointer;
   }
 
   .dot-background {
