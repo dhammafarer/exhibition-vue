@@ -49,6 +49,7 @@ export default {
     return {
       tileRatio: 1.7345,
       tileWidth: 200,
+      offset: 0.94,
       grid: [
         ['grass', 'grass', 'grass'],
         ['grass', 'grass', 'grass'],
@@ -78,13 +79,13 @@ export default {
   methods: {
     rowPosition (i) {
       return {
-        top: this.tileHeight / 2 * i + 'px',
+        top: (this.tileHeight * this.offset) / 2 * i + 'px',
         left: this.tileWidth / 2 * (this.grid.length - i) + 'px'
       }
     },
     tilePosition (i) {
       return {
-        top: this.tileHeight / 2 * i + 'px',
+        top: (this.tileHeight * this.offset) / 2 * i + 'px',
         left: this.tileWidth / 2 * i + 'px'
       }
     },
