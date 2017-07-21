@@ -24,7 +24,7 @@
        <div v-if="show.markers" class="markers">
         <div v-if="tile.type" class="tile" v-for="tile in buildings" :style="buildingTileStyles(tile.pos)">
           <div class="dot-background"></div>
-          <div class="dot"></div>
+          <div class="dot" @click="showTooltip" :type="tile.type"></div>
         </div>
       </div>
 
@@ -171,7 +171,7 @@ export default {
   }
 
   .dot {
-    background: red;
+    background: white;
   }
 
   .dot:hover {
