@@ -15,6 +15,12 @@
         </div>
       </div>
 
+       <div v-if="show.buildings" class="buildings">
+        <div v-if="tile.type" class="tile" v-for="tile in buildings" :style="buildingTileStyles(tile.pos)">
+          <img class="ground-tile" :src="tiles[tile.type]"/>
+        </div>
+      </div>
+
     </div>
 
     <tooltip v-show="displayTooltip" @hideTooltip="hideTooltip" :content="tooltipContent"></tooltip>
@@ -34,7 +40,7 @@ export default {
       show: {
         grid: true,
         ground: false,
-        objects: false,
+        buildings: true,
         markers: false
       },
       displayTooltip: false,
@@ -48,7 +54,7 @@ export default {
         ['stone', 'stone', 'grass']
 
       ],
-      objectsMap: [
+      buildingsMap: [
         ['temple', null, 'solar'],
         ['house', null, 'house'],
         [null, 'factory', null]
@@ -69,10 +75,19 @@ export default {
       return (this.tileWidth / this.tileRatio)
     },
     grid () {
-      this.ground.map(tile => Object.assign({}, tile, {type: 'grid'}))
+      return this.ground.map(tile => Object.assign({}, tile, {type: 'grid'}))
     },
     ground () {
       return this.groundMap
+        .map((row, y) => row
+          .map((el, x) => {
+            return {type: el, pos: [x, y]}
+          })
+        )
+        .reduce((a, b) => a.concat(b), [])
+    },
+    buildings () {
+      return this.buildingsMap
         .map((row, y) => row
           .map((el, x) => {
             return {type: el, pos: [x, y]}
@@ -86,6 +101,13 @@ export default {
       return {
         left: this.tileWidth / 2 * (this.groundMap.length + x - y) + 'px',
         top: this.tileHeight / 2 * (x + y) + 'px',
+        width: this.tileWidth + 'px'
+      }
+    },
+    buildingTileStyles ([x, y]) {
+      return {
+        left: this.tileWidth / 2 * (this.groundMap.length + x - y) + 'px',
+        top: this.tileHeight / 2 * (x + y) - this.tileHeight + 'px',
         width: this.tileWidth + 'px'
       }
     },
@@ -116,7 +138,7 @@ export default {
     margin-top: 60px;
   }
 
-  .grid, .ground, .structures, .markers {
+  .grid, .ground, .buildings, .markers {
     position: absolute;
   }
 
@@ -124,7 +146,7 @@ export default {
     position: absolute;
   }
 
-  .grid-tile, .ground-tile, .structure-tile {
+  .grid-tile, .ground-tile, .building-tile {
     width: 100%;
     height: 100%;
   }
@@ -160,7 +182,7 @@ export default {
     position: absolute;
   }
 
-  .structure-tile {
+  .building-tile {
     transform: translateY(-50%);
     width: 100%;
     height: 100%;
