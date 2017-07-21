@@ -22,7 +22,7 @@
       </div>
 
        <div v-if="show.markers" class="markers">
-        <div v-if="tile.type" class="tile" v-for="tile in buildings" :style="groundTileStyles(tile.pos)">
+        <div v-if="tile.type" class="tile" v-for="tile in buildings" :style="buildingTileStyles(tile.pos)">
           <div class="dot-background"></div>
           <div class="dot"></div>
         </div>
@@ -114,7 +114,8 @@ export default {
       return {
         left: this.tileWidth / 2 * (this.groundMap.length + x - y) + 'px',
         top: this.tileHeight / 2 * (x + y) - this.tileHeight + 'px',
-        width: this.tileWidth + 'px'
+        width: this.tileWidth + 'px',
+        height: this.tileHeight * 2 + 'px'
       }
     },
     showTooltip (e) {
@@ -152,7 +153,7 @@ export default {
     position: absolute;
   }
 
-  .grid-tile, .ground-tile, .building-tile {
+  .grid-tile, .ground-tile, .building-tile, .marker-tile {
     width: 100%;
     height: 100%;
   }
@@ -162,7 +163,7 @@ export default {
     width: 1em;
     height: 1em;
     position: absolute;
-    top: 50%;
+    top: 75%;
     left: 50%;
     transform: translate(-50%, -50%);
     opacity: 0.5;
