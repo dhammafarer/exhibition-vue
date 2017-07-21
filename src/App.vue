@@ -21,6 +21,13 @@
         </div>
       </div>
 
+       <div v-if="show.markers" class="markers">
+        <div v-if="tile.type" class="tile" v-for="tile in buildings" :style="groundTileStyles(tile.pos)">
+          <div class="dot-background"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
     </div>
 
     <tooltip v-show="displayTooltip" @hideTooltip="hideTooltip" :content="tooltipContent"></tooltip>
@@ -39,15 +46,14 @@ export default {
     return {
       show: {
         grid: true,
-        ground: false,
+        ground: true,
         buildings: true,
-        markers: false
+        markers: true
       },
       displayTooltip: false,
       tooltipContent: 'text...',
       tileRatio: 1.7345,
       tileWidth: 200,
-      offset: 0.94,
       groundMap: [
         ['grass', 'grass', 'grass'],
         ['grass', 'grass', 'grass'],
@@ -164,7 +170,7 @@ export default {
   }
 
   .dot {
-    background: white;
+    background: red;
   }
 
   .dot:hover {
