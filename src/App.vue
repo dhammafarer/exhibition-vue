@@ -3,7 +3,13 @@
 
     <div class="graphic">
 
-      <div v-if="true" class="ground">
+      <div v-if="show.grid" class="grid">
+        <div class="tile" v-for="tile in ground" :style="groundTileStyles(tile.pos)">
+          <img class="ground-tile" :src="tiles['grid']">
+        </div>
+      </div>
+
+      <div v-if="show.ground" class="ground">
         <div class="tile" v-for="tile in ground" :style="groundTileStyles(tile.pos)">
           <img class="ground-tile" :src="tiles[tile.type]"/>
         </div>
@@ -25,6 +31,12 @@ export default {
   },
   data () {
     return {
+      show: {
+        grid: true,
+        ground: false,
+        objects: false,
+        markers: false
+      },
       displayTooltip: false,
       tooltipContent: 'text...',
       tileRatio: 1.7345,
@@ -42,7 +54,7 @@ export default {
         [null, 'factory', null]
       ],
       tiles: {
-        zero: require('./assets/0.png'),
+        grid: require('./assets/0.png'),
         grass: require('./assets/grass.png'),
         stone: require('./assets/stone.png'),
         temple: require('./assets/temple.png'),
@@ -55,6 +67,9 @@ export default {
   computed: {
     tileHeight () {
       return (this.tileWidth / this.tileRatio)
+    },
+    grid () {
+      this.ground.map(tile => Object.assign({}, tile, {type: 'grid'}))
     },
     ground () {
       return this.groundMap
