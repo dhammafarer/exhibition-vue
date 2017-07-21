@@ -15,10 +15,10 @@ export default {
   },
   methods: {
     hideTooltip () {
-      this.$emit('hideTooltip')
+      this.$emit('hideTooltip');
     }
   }
-}
+};
 </script>
 
 <style>
