@@ -2,38 +2,13 @@
   <div id="app">
 
     <div class="graphic">
-      <div class="grid">
-        <div class="row" v-for="(row, rowIndex) in grid" :style="rowPosition(rowIndex)">
-          <div class="tile" v-for="(tile, tileIndex) in row" :style="tileStyles(tileIndex)">
-            <img class="grid-tile" :src="tiles['zero']"/>
-          </div>
+
+      <div v-if="true" class="ground">
+        <div class="tile" v-for="tile in ground" :style="groundTileStyles(tile.pos)">
+          <img class="ground-tile" :src="tiles[tile.type]"/>
         </div>
       </div>
 
-      <div class="ground">
-        <div class="row" v-for="(row, rowIndex) in grid" :style="rowPosition(rowIndex)">
-          <div class="tile" v-for="(tile, tileIndex) in row" :style="tileStyles(tileIndex)">
-            <img class="grid-tile" :src="tiles[tile]"/>
-          </div>
-        </div>
-      </div>
-
-      <div class="structures">
-        <div class="row" v-for="(row, rowIndex) in objects" :style="rowPosition(rowIndex)">
-          <div v-if="tile" class="tile" v-for="(tile, tileIndex) in row" :style="structureStyles(tileIndex)">
-            <img class="structure-tile" :src="tiles[tile]"/>
-          </div>
-        </div>
-      </div>
-
-      <div class="markers">
-        <div class="row" v-for="(row, rowIndex) in objects" :style="rowPosition(rowIndex)">
-          <div v-if="tile" class="tile" v-for="(tile, tileIndex) in row" :style="tileStyles(tileIndex)">
-            <div class="dot-background"></div>
-            <div class="dot" :type="tile" @click="showTooltip"></div>
-          </div>
-        </div>
-      </div>
     </div>
 
     <tooltip v-show="displayTooltip" @hideTooltip="hideTooltip" :content="tooltipContent"></tooltip>
@@ -55,13 +30,13 @@ export default {
       tileRatio: 1.7345,
       tileWidth: 200,
       offset: 0.94,
-      grid: [
+      groundMap: [
         ['grass', 'grass', 'grass'],
         ['grass', 'grass', 'grass'],
         ['stone', 'stone', 'grass']
 
       ],
-      objects: [
+      objectsMap: [
         ['temple', null, 'solar'],
         ['house', null, 'house'],
         [null, 'factory', null]
@@ -80,35 +55,23 @@ export default {
   computed: {
     tileHeight () {
       return (this.tileWidth / this.tileRatio)
+    },
+    ground () {
+      return this.groundMap
+        .map((row, y) => row
+          .map((el, x) => {
+            return {type: el, pos: [x, y]}
+          })
+        )
+        .reduce((a, b) => a.concat(b), [])
     }
   },
   methods: {
-    rowPosition (i) {
+    groundTileStyles ([x, y]) {
       return {
-        top: (this.tileHeight * this.offset) / 2 * i + 'px',
-        left: this.tileWidth / 2 * (this.grid.length - i) + 'px'
-      }
-    },
-    tilePosition (i) {
-      return {
-        top: (this.tileHeight * this.offset) / 2 * i + 'px',
-        left: this.tileWidth / 2 * i + 'px'
-      }
-    },
-    tileStyles (i) {
-      return {
-        width: this.tileWidth + 'px',
-        height: this.tileHeight + 'px',
-        top: this.tilePosition(i).top,
-        left: this.tilePosition(i).left
-      }
-    },
-    structureStyles (i) {
-      return {
-        width: this.tileWidth + 'px',
-        height: this.tileHeight * 2 + 'px',
-        top: this.tilePosition(i).top,
-        left: this.tilePosition(i).left
+        left: this.tileWidth / 2 * (this.groundMap.length + x - y) + 'px',
+        top: this.tileHeight / 2 * (x + y) + 'px',
+        width: this.tileWidth + 'px'
       }
     },
     showTooltip (e) {
